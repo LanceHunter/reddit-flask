@@ -20,6 +20,11 @@ def get_posts():
     print queryString
     comments = commentResults.dictresult()
     print comments
+    for post in results :
+        post['comments'] = []
+        for comment in comments:
+            if post['id']==comment['id']:
+                post['comments'].append(comment)
     return jsonify(results)
 
 
