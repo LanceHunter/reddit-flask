@@ -28,12 +28,22 @@ def get_posts():
     return jsonify(results)
 
 @app.route('/api/posts/<int:id>', methods=['GET'])
-def editPost(id):
+def getPost(id):
     queryString = 'select * from posts where id={}'.format(str(id))
     firstResults = db.query(queryString)
     results = firstResults.dictresult()
     print results
+    return jsonify(results.pop())
+
+
+@app.route('/api/posts/<int:id>/comments', methods=['GET'])
+def getCommentsForPost(id):
+    queryString = 'select * from comments where post_id={}'.format(str(id))
+    firstResults = db.query(queryString)
+    results = firstResults.dictresult()
+    print results
     return jsonify(results)
+
 
 @app.route('/api/posts/<int:id>/votes',methods=['POST', 'DELETE'])
 def voteCount(id):
