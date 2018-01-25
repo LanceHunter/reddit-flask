@@ -20,6 +20,9 @@ def get_posts():
     print queryString
     comments = commentResults.dictresult()
     print comments
+    for comment in comments :
+        if post['id'] == comment[4]:
+
     return jsonify(results)
 
 
