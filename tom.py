@@ -27,6 +27,14 @@ def get_posts():
                 post['comments'].append(comment)
     return jsonify(results)
 
+@app.route('/api/posts/<int:id>/votes',methods=['POST', 'DELETE'])
+def voteCount(id):
+    if request.method == 'POST':
+        print 'The id is - ', id
+
+        return 'vote'
+    else:
+        return 'vote'
 
 if __name__ == '__main__':
     app.run()
