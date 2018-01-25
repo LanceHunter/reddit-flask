@@ -2,6 +2,7 @@ from pg import DB
 from flask import Flask, request, send_from_directory, jsonify
 app = Flask(__name__)
 db = DB(dbname = 'reddit-clone', host='localhost')
+def getId(x): return x['id']
 
 @app.route('/')
 def hello_world():
@@ -11,8 +12,14 @@ def hello_world():
 def get_posts():
     firstResults = db.query('select * from posts')
     results = firstResults.dictresult()
-
-    commentResults = db.query('select * from "comments" where "post_id" in (posts.map(p => p.id))')
+    idArray = map(getId ,results)
+    idString = ','.join(str(e) for e in idArray)
+    print idString
+    queryString = 'select * from "comments" where "post_id" in ({})'.format(idString)
+    commentResults = db.query(queryString)
+    print queryString
+    comments = commentResults.dictresult()
+    print comments
     return jsonify(results)
 
 
