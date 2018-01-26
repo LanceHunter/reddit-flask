@@ -2,6 +2,7 @@ from pg import DB
 from flask import Flask, request, send_from_directory, jsonify
 app = Flask(__name__)
 db = DB(dbname = 'reddit-clone', host='localhost')
+
 def getId(x): return x['id']
 
 @app.route('/')
@@ -27,26 +28,49 @@ def get_posts():
                 post['comments'].append(comment)
     return jsonify(results)
 
-@app.route('/api/posts/<int:id>', methods=['GET'])
-def editPost(id):
-   queryString = 'select * from posts where id={}'.format(str(id))
-   firstResults = db.query(queryString)
+@app.route('/api/posts/<int:id>', methods=['GET', 'DELETE'])
+def singlePost(id):
+    if request.method == 'DELETE':
+       queryString = 'DELETE from posts where id={}'.format(str(id))
+       firstResults = db.query(queryString)
+       return 'OK'
+    else:
+        queryString = 'select * from posts where id={}'.format(str(id))
+        firstResults = db.query(queryString)
+        results = firstResults.dictresult()
+        print results
+        return jsonify(results.pop())
+
+
+
+@app.route('/api/posts/<int:id>/comments', methods=['GET'])
+def getCommentsForPost(id):
+    queryString = 'select * from comments where post_id={}'.format(str(id))
+    firstResults = db.query(queryString)
+    results = firstResults.dictresult()
+    print results
+    return jsonify(results)
 
 
 @app.route('/api/posts/<int:id>/votes',methods=['POST', 'DELETE'])
 def voteCount(id):
     if request.method == 'POST':
         print 'The id is - ', id
-        queryString = 'update "posts" set "vote_count" = vote_count + 1 where "id"={}'.format(str(id))
-        upVote = db.query(queryString)
-        voteQueryString = 'select vote_count from posts where "id"={}'.format(str(id))
-        upVoter = db.query(voteQueryString)
-
-        voteCount = {"vote_count":upVote}
-        print voteCount
-        return jsonify(voteCount)
+        queryString = 'update "posts" set "vote_count" = vote_count + 1 where id={}'.format(str(id))
+        upVoted = db.query(queryString)
+        queryStringB = 'select "vote_count" from "posts" where id={}'.format(str(id))
+        returnValue = db.query(queryStringB).dictresult()
+        print returnValue
+        return jsonify(returnValue.pop())
     else:
-        return 'vote'
+        print 'The id is - ', id
+        queryString = 'update "posts" set "vote_count" = vote_count - 1 where id={}'.format(str(id))
+        upVoted = db.query(queryString)
+        queryStringB = 'select "vote_count" from "posts" where id={}'.format(str(id))
+        returnValue = db.query(queryStringB).dictresult()
+        print returnValue
+        return jsonify(returnValue.pop())
+    
 
 if __name__ == '__main__':
     app.run()
