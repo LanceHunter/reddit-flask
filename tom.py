@@ -24,7 +24,7 @@ def get_posts():
     for post in results :
         post['comments'] = []
         for comment in comments:
-            if post['id']==comment['id']:
+            if post['id'] == comment['post_id']:
                 post['comments'].append(comment)
     return jsonify(results)
 
