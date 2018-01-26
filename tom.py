@@ -28,6 +28,7 @@ def get_posts():
     return jsonify(results)
 
 @app.route('/api/posts/<int:id>', methods=['GET'])
+<<<<<<< HEAD
 def getPost(id):
     queryString = 'select * from posts where id={}'.format(str(id))
     firstResults = db.query(queryString)
@@ -43,14 +44,30 @@ def getCommentsForPost(id):
     results = firstResults.dictresult()
     print results
     return jsonify(results)
+=======
+def editPost(id):
+   queryString = 'select * from posts where id={}'.format(str(id))
+   firstResults = db.query(queryString)
+>>>>>>> Tohm
 
 
 @app.route('/api/posts/<int:id>/votes',methods=['POST', 'DELETE'])
 def voteCount(id):
     if request.method == 'POST':
         print 'The id is - ', id
+<<<<<<< HEAD
         db.query()
         return 'vote'
+=======
+        queryString = 'update "posts" set "vote_count" = vote_count + 1 where "id"={}'.format(str(id))
+        upVote = db.query(queryString)
+        voteQueryString = 'select vote_count from posts where "id"={}'.format(str(id))
+        upVoter = db.query(voteQueryString)
+
+        voteCount = {"vote_count":upVote}
+        print voteCount
+        return jsonify(voteCount)
+>>>>>>> Tohm
     else:
         return 'vote'
 
