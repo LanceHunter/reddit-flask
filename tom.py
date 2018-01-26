@@ -27,12 +27,24 @@ def get_posts():
                 post['comments'].append(comment)
     return jsonify(results)
 
+@app.route('/api/posts/<int:id>', methods=['GET'])
+def editPost(id):
+   queryString = 'select * from posts where id={}'.format(str(id))
+   firstResults = db.query(queryString)
+
+
 @app.route('/api/posts/<int:id>/votes',methods=['POST', 'DELETE'])
 def voteCount(id):
     if request.method == 'POST':
         print 'The id is - ', id
+        queryString = 'update "posts" set "vote_count" = vote_count + 1 where "id"={}'.format(str(id))
+        upVote = db.query(queryString)
+        voteQueryString = 'select vote_count from posts where "id"={}'.format(str(id))
+        upVoter = db.query(voteQueryString)
 
-        return 'vote'
+        voteCount = {"vote_count":upVote}
+        print voteCount
+        return jsonify(voteCount)
     else:
         return 'vote'
 
