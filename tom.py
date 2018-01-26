@@ -52,6 +52,7 @@ def getCommentsForPost(id):
     return jsonify(results)
 
 
+
 @app.route('/api/posts/<int:id>/votes',methods=['POST', 'DELETE'])
 def voteCount(id):
     if request.method == 'POST':
@@ -70,7 +71,7 @@ def voteCount(id):
         returnValue = db.query(queryStringB).dictresult()
         print returnValue
         return jsonify(returnValue.pop())
-    
+
 
 if __name__ == '__main__':
     app.run()
