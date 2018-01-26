@@ -1,20 +1,24 @@
-import os
-import flaskr
 import unittest
-import tempfile
+from urllib2 import Request, urlopen, URLError, HTTPError
 
-class FlaskrTestCase(unittest.TestCase):
+class TestStringMethods(unittest.TestCase):
 
-    def setUp(self):
-        self.db_fd, flaskr.app.config['DATABASE'] = tempfile.mkstemp()
-        flaskr.app.testing = True
-        self.app = flaskr.app.test_client()
-        with flaskr.app.app_context():
-            flaskr.init_db()
+    def test_upper(self):
+        req = Request('http://localhost:5000/')
+        response = urlopen(req)
+        print response
+        self.assertEqual('foo'.upper(), 'FOO')
 
-    def tearDown(self):
-        os.close(self.db_fd)
-        os.unlink(flaskr.app.config['DATABASE'])
+    def test_isupper(self):
+        self.assertTrue('FOO'.isupper())
+        self.assertFalse('Foo'.isupper())
+
+    def test_split(self):
+        s = 'hello world'
+        self.assertEqual(s.split(), ['hello', 'world'])
+        # check that s.split fails when the separator is not a string
+        with self.assertRaises(TypeError):
+            s.split(2)
 
 if __name__ == '__main__':
     unittest.main()
