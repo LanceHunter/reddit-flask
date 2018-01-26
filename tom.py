@@ -56,10 +56,21 @@ def getCommentsForPost(id):
 def voteCount(id):
     if request.method == 'POST':
         print 'The id is - ', id
-
-        return 'vote'
+        queryString = 'update "posts" set "vote_count" = vote_count + 1 where id={}'.format(str(id))
+        upVoted = db.query(queryString)
+        queryStringB = 'select "vote_count" from "posts" where id={}'.format(str(id))
+        returnValue = db.query(queryStringB).dictresult()
+        print returnValue
+        return jsonify(returnValue.pop())
     else:
-        return 'vote'
+        print 'The id is - ', id
+        queryString = 'update "posts" set "vote_count" = vote_count - 1 where id={}'.format(str(id))
+        upVoted = db.query(queryString)
+        queryStringB = 'select "vote_count" from "posts" where id={}'.format(str(id))
+        returnValue = db.query(queryStringB).dictresult()
+        print returnValue
+        return jsonify(returnValue.pop())
+    
 
 if __name__ == '__main__':
     app.run()
